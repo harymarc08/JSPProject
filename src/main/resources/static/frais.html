@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Frais List</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <style>
+        .sidebar {
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 250px;
+            background-color: #f8f9fa;
+            padding: 15px;
+        }
+        .sidebar h4 {
+            font-size: 1.5rem; /* Taille de police agrandie pour l'en-tête */
+            font-weight: bold; /* Poids de la police */
+            color: #007bff; /* Couleur de texte personnalisée */
+            margin-bottom: 20px; /* Espace sous l'en-tête */
+        }
+        .sidebar .nav-link {
+            font-size: 1.1rem; /* Taille de police agrandie pour les liens */
+            padding: 10px 15px; /* Espacement autour des liens */
+        }
+        .sidebar .nav-link i {
+            margin-right: 10px; /* Espace entre l'icône et le texte */
+        }
+        .main-content {
+            margin-left: 250px;
+            padding: 15px;
+        }
+    </style>
+</head>
+<body><div class="sidebar">
+    <h4>NeoBank</h4>
+    <ul class="nav flex-column">
+        <li class="nav-item">
+            <a class="nav-link" href="/client-list.html">
+                <i class="fas fa-users"></i> Clients
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/envoyer.html">
+                <i class="fas fa-paper-plane"></i> Envoyer
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/frais.html">
+                <i class="fas fa-dollar-sign"></i> Frais
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/taux.html">
+                <i class="fas fa-percentage"></i> Taux
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/generate-pdf-page">
+                <i class="fas fa-file-pdf"></i> Générer un PDF
+            </a>
+        </li>
+    </ul>
+</div>
+<div class="main-content">
+<div class="container">
+    <div class="row mt-5">
+        <!-- Tableau des Frais -->
+        <div class="col-md-12">
+            <h1>Liste des Frais</h1>
+            <table class="table table-striped mt-3">
+                <thead>
+                <tr>
+
+                    <th>Montant 1</th>
+                    <th>Montant 2</th>
+                    <th>Frais</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody id="frais-table-body">
+                <!-- Les frais seront insérés ici -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Formulaire de Création de Frais -->
+        <div class="col-md-12">
+            <h2>Créer un Frais</h2>
+            <form id="create-frais-form" class="mt-3">
+                <div class="form-row">
+                    <div class="form-group col-md-4">
+                        <label for="montant1">Montant 1</label>
+                        <input type="number" class="form-control" id="montant1" step="0.01" required>
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label for="montant2">Montant 2</label>
+                        <input type="number" class="form-control" id="montant2" step="0.01" required>
+                    </div>
+
+                    <div class="form-group col-md-4">
+                        <label for="frais">Frais</label>
+                        <input type="number" class="form-control" id="frais" step="0.01"  required>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary">Créer Frais</button>
+            </form>
+        </div>
+    </div>
+</div>
+</div>
+
+<!-- Modal de modification -->
+<div class="modal fade" id="editFraisModal" tabindex="-1" role="dialog" aria-labelledby="editFraisModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editFraisModalLabel">Modifier Frais</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="edit-frais-form">
+                    <input type="hidden" id="edit-idFrais" name="idFrais">
+                    <div class="form-group">
+                        <label for="edit-montant1">Montant 1</label>
+                        <input type="number" class="form-control" id="edit-montant1" step="0.01"  required>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-montant2">Montant 2</label>
+                        <input type="number" class="form-control" id="edit-montant2" step="0.01"  required>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-frais">Frais</label>
+                        <input type="number" class="form-control" id="edit-frais" step="0.01"  required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Modifier Frais</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.7/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        loadFrais();
+    });
+
+    function loadFrais() {
+        fetch('/api/frais')
+            .then(response => response.json())
+            .then(data => {
+                let tableBody = document.getElementById('frais-table-body');
+                tableBody.innerHTML = ''; // Clear existing content
+                data.forEach(frais => {
+                    let row = document.createElement('tr');
+                    row.innerHTML = `
+
+                        <td>${frais.montant1}</td>
+                        <td>${frais.montant2}</td>
+                        <td>${frais.frais}</td>
+                        <td>
+                            <button class="btn btn-warning btn-sm" onclick="showEditFraisModal('${frais.idFrais}')">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn btn-danger btn-sm" onclick="deleteFrais('${frais.idFrais}', this)">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
+                        </td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+            })
+            .catch(error => console.error('Error fetching frais data:', error));
+    }
+
+    document.getElementById('create-frais-form').addEventListener('submit', function (event) {
+        event.preventDefault();
+        let frais = {
+            montant1: document.getElementById('montant1').value,
+            montant2: document.getElementById('montant2').value,
+            frais: document.getElementById('frais').value
+        };
+        fetch('/api/frais', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(frais)
+        })
+            .then(response => response.json())
+            .then(data => {
+                alert('Frais créé avec succès!');
+                loadFrais(); // Reload the frais list
+                document.getElementById('create-frais-form').reset();
+            })
+            .catch(error => console.error('Error creating frais:', error));
+    });
+
+    function showEditFraisModal(idFrais) {
+        fetch('/api/frais/' + idFrais)
+            .then(response => response.json())
+            .then(frais => {
+                document.getElementById('edit-idFrais').value = frais.idFrais;
+                document.getElementById('edit-montant1').value = frais.montant1;
+                document.getElementById('edit-montant2').value = frais.montant2;
+                document.getElementById('edit-frais').value = frais.frais;
+                $('#editFraisModal').modal('show');
+            })
+            .catch(error => console.error('Error fetching frais data:', error));
+    }
+
+    document.getElementById('edit-frais-form').addEventListener('submit', function (event) {
+        event.preventDefault();
+        let frais = {
+            idFrais: document.getElementById('edit-idFrais').value,
+            montant1: document.getElementById('edit-montant1').value,
+            montant2: document.getElementById('edit-montant2').value,
+            frais: document.getElementById('edit-frais').value
+        };
+        fetch('/api/frais/' + frais.idFrais, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(frais)
+        })
+            .then(response => response.json())
+            .then(data => {
+                alert('Frais modifié avec succès!');
+                loadFrais(); // Reload the frais list
+                $('#editFraisModal').modal('hide');
+            })
+            .catch(error => console.error('Error updating frais:', error));
+    });
+
+    function deleteFrais(idFrais, button) {
+        if (confirm('Êtes-vous sûr de vouloir supprimer ce frais ?')) {
+            fetch('/api/frais/' + idFrais, {
+                method: 'DELETE'
+            })
+                .then(() => {
+                    alert('Frais supprimé avec succès!');
+                    loadFrais(); // Reload the frais list after deletion
+                })
+                .catch(error => console.error('Error deleting frais:', error));
+        }
+    }
+</script>
+</body>
+</html>

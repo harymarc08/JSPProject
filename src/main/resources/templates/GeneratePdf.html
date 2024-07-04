@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Génération de PDF</title>
+  <!-- Intégration de Bootstrap CSS -->
+
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+  <style>
+    .sidebar {
+      height: 100vh;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 250px;
+      background-color: #f8f9fa;
+      padding: 15px;
+    }
+    .sidebar h4 {
+      font-size: 1.5rem; /* Taille de police agrandie pour l'en-tête */
+      font-weight: bold; /* Poids de la police */
+      color: #007bff; /* Couleur de texte personnalisée */
+      margin-bottom: 20px; /* Espace sous l'en-tête */
+    }
+    .sidebar .nav-link {
+      font-size: 1.1rem; /* Taille de police agrandie pour les liens */
+      padding: 10px 15px; /* Espacement autour des liens */
+    }
+    .sidebar .nav-link i {
+      margin-right: 10px; /* Espace entre l'icône et le texte */
+    }
+    .main-content {
+      margin-left: 250px;
+      padding: 15px;
+    }
+  </style>
+</head>
+<body>
+<div class="sidebar">
+  <h4>NeoBank</h4>
+  <ul class="nav flex-column">
+    <li class="nav-item">
+      <a class="nav-link" href="/client-list.html">
+        <i class="fas fa-users"></i> Clients
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="/envoyer.html">
+        <i class="fas fa-paper-plane"></i> Envoyer
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="/frais.html">
+        <i class="fas fa-dollar-sign"></i> Frais
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="/taux.html">
+        <i class="fas fa-percentage"></i> Taux
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="/generate-pdf-page">
+        <i class="fas fa-file-pdf"></i> Générer un PDF
+      </a>
+    </li>
+  </ul>
+</div>
+<div class="main-content">
+<div class="container mt-5">
+  <h1 class="mb-4">Générer un PDF</h1>
+  <form th:action="@{/generate-pdf}" method="get">
+    <div class="form-group">
+      <label for="numTel">Numéro de téléphone :</label>
+      <select id="numTel" name="numTel" class="form-control" required>
+
+      </select>
+    </div>
+    <div class="form-group">
+      <label for="month">Mois :</label>
+      <input type="month" id="month" name="month" class="form-control" placeholder="En format YYYY-MM (par exempl :2024-06)" required>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Générer PDF</button>
+  </form>
+</div>
+</div>
+
+<!-- Intégration de Bootstrap JS (optionnel) -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script>
+  async function loadEnvoyers() {
+    try {
+      const response = await fetch('/api/envoyer'); // URL de l'API
+      const envoyers = await response.json();
+      const select = document.getElementById('numTel');
+
+      // Utilisez un Set pour garantir l'unicité des valeurs
+      const uniqueEnvoyeurs = new Set();
+
+      envoyers.forEach(envoyeur => {
+        if (!uniqueEnvoyeurs.has(envoyeur.numEnvoyeur)) {
+          uniqueEnvoyeurs.add(envoyeur.numEnvoyeur);
+
+          const option = document.createElement('option');
+          option.value = envoyeur.numEnvoyeur; // Assurez-vous que 'numEnvoyeur' correspond au champ dans EnvoyerDto
+          option.textContent = envoyeur.numEnvoyeur; // Ajustez si vous voulez afficher un autre attribut
+          select.appendChild(option);
+        }
+      });
+    } catch (error) {
+      console.error('Erreur lors du chargement des envoyeurs:', error);
+    }
+  }
+
+  // Appel de la fonction pour charger les envoyeurs
+  document.addEventListener('DOMContentLoaded', loadEnvoyers);
+</script>
+</body>
+</html>

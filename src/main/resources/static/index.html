@@ -1,0 +1,350 @@
+<!--<!DOCTYPE html>-->
+<!--<html lang="en">-->
+<!--<head>-->
+<!--    <meta charset="UTF-8">-->
+<!--    <meta name="viewport" content="width=device-width, initial-scale=1.0">-->
+<!--    <title>Client List</title>-->
+<!--    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">-->
+<!--    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">-->
+<!--    <style>-->
+<!--        .sidebar {-->
+<!--            height: 100vh;-->
+<!--            position: fixed;-->
+<!--            top: 0;-->
+<!--            left: 0;-->
+<!--            width: 250px;-->
+<!--            background-color: #f8f9fa;-->
+<!--            padding: 15px;-->
+<!--        }-->
+<!--        .sidebar h4 {-->
+<!--            font-size: 1.5rem; /* Taille de police agrandie pour l'en-tête */-->
+<!--            font-weight: bold; /* Poids de la police */-->
+<!--            color: #007bff; /* Couleur de texte personnalisée */-->
+<!--            margin-bottom: 20px; /* Espace sous l'en-tête */-->
+<!--        }-->
+<!--        .sidebar .nav-link {-->
+<!--            font-size: 1.1rem; /* Taille de police agrandie pour les liens */-->
+<!--            padding: 10px 15px; /* Espacement autour des liens */-->
+<!--        }-->
+<!--        .sidebar .nav-link i {-->
+<!--            margin-right: 10px; /* Espace entre l'icône et le texte */-->
+<!--        }-->
+<!--        .main-content {-->
+<!--            margin-left: 250px;-->
+<!--            padding: 15px;-->
+<!--        }-->
+<!--    </style>-->
+<!--    <style>-->
+<!--        .sidebar {-->
+<!--            height: 100vh;-->
+<!--            position: fixed;-->
+<!--            top: 0;-->
+<!--            left: 0;-->
+<!--            width: 250px;-->
+<!--            background-color: #f8f9fa;-->
+<!--            padding: 15px;-->
+<!--        }-->
+<!--        .sidebar h4 {-->
+<!--            font-size: 1.5rem; /* Taille de police agrandie pour l'en-tête */-->
+<!--            font-weight: bold; /* Poids de la police */-->
+<!--            color: #007bff; /* Couleur de texte personnalisée */-->
+<!--            margin-bottom: 20px; /* Espace sous l'en-tête */-->
+<!--        }-->
+<!--        .sidebar .nav-link {-->
+<!--            font-size: 1.1rem; /* Taille de police agrandie pour les liens */-->
+<!--            padding: 10px 15px; /* Espacement autour des liens */-->
+<!--        }-->
+<!--        .sidebar .nav-link i {-->
+<!--            margin-right: 10px; /* Espace entre l'icône et le texte */-->
+<!--        }-->
+<!--        .main-content {-->
+<!--            margin-left: 250px;-->
+<!--            padding: 15px;-->
+<!--        }-->
+<!--    </style>-->
+<!--</head>-->
+<!--<body>-->
+<!--<div class="sidebar">-->
+<!--    <h4>NeoBank</h4>-->
+<!--    <ul class="nav flex-column">-->
+<!--        <li class="nav-item">-->
+<!--            <a class="nav-link" href="/client-list.html">-->
+<!--                <i class="fas fa-users"></i> Clients-->
+<!--            </a>-->
+<!--        </li>-->
+<!--        <li class="nav-item">-->
+<!--            <a class="nav-link" href="/envoyer.html">-->
+<!--                <i class="fas fa-paper-plane"></i> Envoyer-->
+<!--            </a>-->
+<!--        </li>-->
+<!--        <li class="nav-item">-->
+<!--            <a class="nav-link" href="/frais.html">-->
+<!--                <i class="fas fa-dollar-sign"></i> Frais-->
+<!--            </a>-->
+<!--        </li>-->
+<!--        <li class="nav-item">-->
+<!--            <a class="nav-link" href="/taux.html">-->
+<!--                <i class="fas fa-percentage"></i> Taux-->
+<!--            </a>-->
+<!--        </li>-->
+<!--        <li class="nav-item">-->
+<!--            <a class="nav-link" href="/generate-pdf-page">-->
+<!--                <i class="fas fa-file-pdf"></i> Générer un PDF-->
+<!--            </a>-->
+<!--        </li>-->
+<!--    </ul>-->
+<!--</div>-->
+<!--<div class="main-content">-->
+<!--    <div class="container">-->
+<!--        <div class="row mt-5">-->
+<!--            &lt;!&ndash; Ajout de la barre de recherche &ndash;&gt;-->
+<!--            <div class="col-md-12 mt-3">-->
+<!--                <input type="text" id="search-input" class="form-control" placeholder="Rechercher par numéro de téléphone, nom, pays ou email">-->
+<!--            </div>-->
+
+<!--            &lt;!&ndash; Tableau des Clients &ndash;&gt;-->
+<!--            <div class="col-md-12">-->
+<!--                <h1>Liste des Clients</h1>-->
+<!--                <table class="table table-striped mt-3">-->
+<!--                    <thead>-->
+<!--                    <tr>-->
+<!--                        <th>Numéro de Téléphone</th>-->
+<!--                        <th>Nom</th>-->
+<!--                        <th>Sexe</th>-->
+<!--                        <th>Pays</th>-->
+<!--                        <th>Solde</th>-->
+<!--                        <th>Email</th>-->
+<!--                        <th>Actions</th>-->
+<!--                    </tr>-->
+<!--                    </thead>-->
+<!--                    <tbody id="client-table-body">-->
+<!--                    &lt;!&ndash; Les clients seront insérés ici &ndash;&gt;-->
+<!--                    </tbody>-->
+<!--                </table>-->
+<!--            </div>-->
+
+<!--            &lt;!&ndash; Formulaire de Création de Client &ndash;&gt;-->
+<!--            <div class="col-md-12">-->
+<!--                <h2>Créer un Client</h2>-->
+<!--                <form id="create-client-form" class="mt-3">-->
+<!--                    <div class="form-row">-->
+<!--                        <div class="form-group col-md-6">-->
+<!--                            <label for="numTel">Numéro de Téléphone</label>-->
+<!--                            <input type="text" class="form-control" id="numTel" required>-->
+<!--                        </div>-->
+<!--                        <div class="form-group col-md-6">-->
+<!--                            <label for="nom">Nom</label>-->
+<!--                            <input type="text" class="form-control" id="nom" required>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                    <div class="form-row">-->
+<!--                        <div class="form-group col-md-6">-->
+<!--                            <label for="sexe">Sexe</label>-->
+<!--                            <select class="form-control" id="sexe" required>-->
+<!--                                <option value="M">Masculin</option>-->
+<!--                                <option value="F">Féminin</option>-->
+<!--                            </select>-->
+<!--                        </div>-->
+<!--                        <div class="form-group col-md-6">-->
+<!--                            <label for="pays">Pays</label>-->
+<!--                            <input type="text" class="form-control" id="pays"   required>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                    <div class="form-row">-->
+<!--                        <div class="form-group col-md-6">-->
+<!--                            <label for="solde">Solde</label>-->
+<!--                            <input type="number" class="form-control" id="solde" step="0.01"  required>-->
+<!--                        </div>-->
+<!--                        <div class="form-group col-md-6">-->
+<!--                            <label for="mail">Email</label>-->
+<!--                            <input type="email" class="form-control" id="mail"   required>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                    <button type="submit" class="btn btn-primary">Créer Client</button>-->
+<!--                </form>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
+<!--</div>-->
+
+<!--&lt;!&ndash; Modal de modification &ndash;&gt;-->
+<!--<div class="modal fade" id="editClientModal" tabindex="-1" role="dialog" aria-labelledby="editClientModalLabel" aria-hidden="true">-->
+<!--    <div class="modal-dialog" role="document">-->
+<!--        <div class="modal-content">-->
+<!--            <div class="modal-header">-->
+<!--                <h5 class="modal-title" id="editClientModalLabel">Modifier Client</h5>-->
+<!--                <button type="button" class="close" data-dismiss="modal" aria-label="Close">-->
+<!--                    <span aria-hidden="true">&times;</span>-->
+<!--                </button>-->
+<!--            </div>-->
+<!--            <div class="modal-body">-->
+<!--                <form id="edit-client-form">-->
+<!--                    <input type="hidden" id="edit-numTel" name="numTel">-->
+<!--                    <div class="form-group">-->
+<!--                        <label for="edit-nom">Nom</label>-->
+<!--                        <input type="text" class="form-control" id="edit-nom" required>-->
+<!--                    </div>-->
+<!--                    <div class="form-group">-->
+<!--                        <label for="edit-sexe">Sexe</label>-->
+<!--                        <select class="form-control" id="edit-sexe" required>-->
+<!--                            <option value="M">Masculin</option>-->
+<!--                            <option value="F">Féminin</option>-->
+<!--                        </select>-->
+<!--                    </div>-->
+<!--                    <div class="form-group">-->
+<!--                        <label for="edit-pays">Pays</label>-->
+<!--                        <input type="text" class="form-control" id="edit-pays" required>-->
+<!--                    </div>-->
+<!--                    <div class="form-group">-->
+<!--                        <label for="edit-solde">Solde</label>-->
+<!--                        <input type="number" class="form-control" id="edit-solde" step="0.01"  required>-->
+<!--                    </div>-->
+<!--                    <div class="form-group">-->
+<!--                        <label for="edit-mail">Email</label>-->
+<!--                        <input type="email" class="form-control" id="edit-mail" required>-->
+<!--                    </div>-->
+<!--                    <button type="submit" class="btn btn-primary">Modifier Client</button>-->
+<!--                </form>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
+<!--</div>-->
+
+<!--<<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>-->
+<!--<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.7/dist/umd/popper.min.js"></script>-->
+<!--<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>-->
+<!--<script>-->
+<!--    let clients = [];-->
+<!--    document.addEventListener('DOMContentLoaded', function () {-->
+<!--        loadClients();-->
+<!--        // Ajout de l'écouteur d'événement pour la recherche-->
+<!--        document.getElementById('search-input').addEventListener('input', function () {-->
+<!--            const query = this.value.toLowerCase();-->
+<!--            const filteredClients = clients.filter(client => {-->
+<!--                return client.numTel.toLowerCase().includes(query) ||-->
+<!--                    client.nom.toLowerCase().includes(query) ||-->
+<!--                    client.pays.toLowerCase().includes(query) ||-->
+<!--                    client.mail.toLowerCase().includes(query);-->
+<!--            });-->
+<!--            displayClients(filteredClients);-->
+<!--        });-->
+<!--    });-->
+
+<!--    function loadClients() {-->
+<!--        fetch('/api/client')-->
+<!--            .then(response => response.json())-->
+<!--            .then(data => {-->
+<!--                clients = data; // Stocker les clients récupérés-->
+<!--                displayClients(clients);-->
+<!--            })-->
+<!--            .catch(error => console.error('Error fetching client data:', error));-->
+<!--    }-->
+<!--    function displayClients(clientsToDisplay) {-->
+<!--        let tableBody = document.getElementById('client-table-body');-->
+<!--        tableBody.innerHTML = ''; // Clear existing content-->
+<!--        clientsToDisplay.forEach(client => {-->
+<!--            let sexe = client.sexe === 'M' ? 'Masculin' : 'Féminin';-->
+<!--            let row = document.createElement('tr');-->
+<!--            row.innerHTML = `-->
+<!--                <td>${client.numTel}</td>-->
+<!--                <td>${client.nom}</td>-->
+<!--                <td>${sexe}</td>-->
+<!--                <td>${client.pays}</td>-->
+<!--                <td>${client.solde}</td>-->
+<!--                <td>${client.mail}</td>-->
+<!--                <td>-->
+<!--                    <button class="btn btn-warning btn-sm" onclick="showEditClientModal('${client.numTel}')">-->
+<!--                        <i class="fas fa-edit"></i>-->
+<!--                    </button>-->
+<!--                    <button class="btn btn-danger btn-sm" onclick="deleteClient('${client.numTel}', this)">-->
+<!--                        <i class="fas fa-trash-alt"></i>-->
+<!--                    </button>-->
+<!--                </td>-->
+<!--            `;-->
+<!--            tableBody.appendChild(row);-->
+<!--        });-->
+<!--    }-->
+
+<!--    document.getElementById('create-client-form').addEventListener('submit', function (event) {-->
+<!--        event.preventDefault();-->
+<!--        let client = {-->
+<!--            numTel: document.getElementById('numTel').value,-->
+<!--            nom: document.getElementById('nom').value,-->
+<!--            sexe: document.getElementById('sexe').value,-->
+<!--            pays: document.getElementById('pays').value,-->
+<!--            solde: document.getElementById('solde').value,-->
+<!--            mail: document.getElementById('mail').value-->
+<!--        };-->
+<!--        fetch('/api/client', {-->
+<!--            method: 'POST',-->
+<!--            headers: {-->
+<!--                'Content-Type': 'application/json'-->
+<!--            },-->
+<!--            body: JSON.stringify(client)-->
+<!--        })-->
+<!--            .then(response => response.json())-->
+<!--            .then(data => {-->
+<!--                alert('Client créé avec succès!');-->
+<!--                loadClients(); // Reload the client list-->
+<!--                document.getElementById('create-client-form').reset();-->
+<!--            })-->
+<!--            .catch(error => console.error('Error creating client:', error));-->
+<!--    });-->
+
+<!--    function showEditClientModal(numTel) {-->
+<!--        fetch('/api/client/' + numTel)-->
+<!--            .then(response => response.json())-->
+<!--            .then(client => {-->
+<!--                console.log('Client data for edit:', client); // Debugging line-->
+<!--                document.getElementById('edit-numTel').value = client.numTel;-->
+<!--                document.getElementById('edit-nom').value = client.nom;-->
+<!--                document.getElementById('edit-sexe').value = client.sexe;-->
+<!--                document.getElementById('edit-pays').value = client.pays;-->
+<!--                document.getElementById('edit-solde').value = client.solde;-->
+<!--                document.getElementById('edit-mail').value = client.mail;-->
+<!--                $('#editClientModal').modal('show');-->
+<!--            })-->
+<!--            .catch(error => console.error('Error fetching client data:', error));-->
+<!--    }-->
+
+<!--    document.getElementById('edit-client-form').addEventListener('submit', function (event) {-->
+<!--        event.preventDefault();-->
+<!--        let client = {-->
+<!--            numTel: document.getElementById('edit-numTel').value,-->
+<!--            nom: document.getElementById('edit-nom').value,-->
+<!--            sexe: document.getElementById('edit-sexe').value,-->
+<!--            pays: document.getElementById('edit-pays').value,-->
+<!--            solde: document.getElementById('edit-solde').value,-->
+<!--            mail: document.getElementById('edit-mail').value-->
+<!--        };-->
+<!--        fetch('/api/client/' + client.numTel, {-->
+<!--            method: 'PUT',-->
+<!--            headers: {-->
+<!--                'Content-Type': 'application/json'-->
+<!--            },-->
+<!--            body: JSON.stringify(client)-->
+<!--        })-->
+<!--            .then(response => response.json())-->
+<!--            .then(data => {-->
+<!--                alert('Client modifié avec succès!');-->
+<!--                loadClients(); // Reload the client list-->
+<!--                $('#editClientModal').modal('hide');-->
+<!--            })-->
+<!--            .catch(error => console.error('Error updating client:', error));-->
+<!--    });-->
+
+<!--    function deleteClient(numTel, button) {-->
+<!--        if (confirm('Êtes-vous sûr de vouloir supprimer ce client ?')) {-->
+<!--            fetch('/api/client/' + numTel, {-->
+<!--                method: 'DELETE'-->
+<!--            })-->
+<!--                .then(() => {-->
+<!--                    alert('Client supprimé avec succès!');-->
+<!--                    loadClients(); // Reload the client list after deletion-->
+<!--                })-->
+<!--                .catch(error => console.error('Error deleting client:', error));-->
+<!--        }-->
+<!--    }-->
+<!--</script>-->
+<!--</body>-->
+<!--</html>-->

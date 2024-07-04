@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Liste des Taux</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <style>
+        .sidebar {
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 250px;
+            background-color: #f8f9fa;
+            padding: 15px;
+        }
+        .sidebar h4 {
+            font-size: 1.5rem; /* Taille de police agrandie pour l'en-tête */
+            font-weight: bold; /* Poids de la police */
+            color: #007bff; /* Couleur de texte personnalisée */
+            margin-bottom: 20px; /* Espace sous l'en-tête */
+        }
+        .sidebar .nav-link {
+            font-size: 1.1rem; /* Taille de police agrandie pour les liens */
+            padding: 10px 15px; /* Espacement autour des liens */
+        }
+        .sidebar .nav-link i {
+            margin-right: 10px; /* Espace entre l'icône et le texte */
+        }
+        .main-content {
+            margin-left: 250px;
+            padding: 15px;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <h4>NeoBank</h4>
+    <ul class="nav flex-column">
+        <li class="nav-item">
+            <a class="nav-link" href="/client-list.html">
+                <i class="fas fa-users"></i> Clients
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/envoyer.html">
+                <i class="fas fa-paper-plane"></i> Envoyer
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/frais.html">
+                <i class="fas fa-dollar-sign"></i> Frais
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/taux.html">
+                <i class="fas fa-percentage"></i> Taux
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/generate-pdf-page">
+                <i class="fas fa-file-pdf"></i> Générer un PDF
+            </a>
+        </li>
+    </ul>
+</div>
+<div class="main-content">
+<div class="container">
+    <div class="row mt-5">
+        <!-- Tableau des Taux -->
+        <div class="col-md-12">
+            <h1>Liste des Taux</h1>
+            <table class="table table-striped mt-3">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Montant 1</th>
+                    <th>Montant 2</th>
+                    <th>Pays</th>
+                    <th>Monnaie</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody id="taux-table-body">
+                <!-- Les taux seront insérés ici -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Formulaire de Création de Taux -->
+        <div class="col-md-12">
+            <h2>Créer un Taux</h2>
+            <form id="create-taux-form" class="mt-3">
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="montant1">Montant 1</label>
+                        <input type="number" class="form-control" id="montant1" step="0.01"  required>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="montant2">Montant 2</label>
+                        <input type="number" class="form-control" id="montant2" step="0.01"  required>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="montant2">Pays</label>
+                        <input type="text" class="form-control" id="pays" step="0.01"  required>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="montant2">Monnaie</label>
+                        <input type="text" class="form-control" id="monnaie" step="0.01"  required>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary">Créer Taux</button>
+            </form>
+        </div>
+    </div>
+</div>
+</div>
+<!-- Modal de modification -->
+<div class="modal fade" id="editTauxModal" tabindex="-1" role="dialog" aria-labelledby="editTauxModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editTauxModalLabel">Modifier Taux</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="edit-taux-form">
+                    <input type="hidden" id="edit-idTaux" name="idTaux">
+                    <div class="form-group">
+                        <label for="edit-montant1">Montant 1</label>
+                        <input type="number" class="form-control" id="edit-montant1"  required>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-montant2">Montant 2</label>
+                        <input type="number" class="form-control" id="edit-montant2"   required>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="edit-pays">Pays</label>
+                        <input type="text" class="form-control" id="edit-pays"  required>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="edit-monnaie">Monnaie</label>
+                        <input type="text" class="form-control" id="edit-monnaie"  required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Modifier Taux</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.7/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        loadTaux();
+    });
+
+    function loadTaux() {
+        fetch('/api/taux')
+            .then(response => response.json())
+            .then(data => {
+                let tableBody = document.getElementById('taux-table-body');
+                tableBody.innerHTML = ''; // Clear existing content
+                data.forEach(taux => {
+                    let row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${taux.idTaux}</td>
+                        <td>${taux.montant1}</td>
+                        <td>${taux.montant2}</td>
+                         <td>${taux.pays}</td>
+                         <td>${taux.monnaie}</td>
+                        <td>
+                            <button class="btn btn-warning btn-sm" onclick="showEditTauxModal('${taux.idTaux}')">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn btn-danger btn-sm" onclick="deleteTaux('${taux.idTaux}', this)">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
+                        </td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+            })
+            .catch(error => console.error('Error fetching taux data:', error));
+    }
+
+    document.getElementById('create-taux-form').addEventListener('submit', function (event) {
+        event.preventDefault();
+        let taux = {
+            montant1: document.getElementById('montant1').value,
+            montant2: document.getElementById('montant2').value,
+            monnaie: document.getElementById('monnaie').value,
+            pays: document.getElementById('pays').value
+        };
+        fetch('/api/taux', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(taux)
+        })
+            .then(response => response.json())
+            .then(data => {
+                alert('Taux créé avec succès!');
+                loadTaux(); // Reload the taux list
+                document.getElementById('create-taux-form').reset();
+            })
+            .catch(error => console.error('Error creating taux:', error));
+    });
+
+    function showEditTauxModal(idTaux) {
+        fetch('/api/taux/' + idTaux)
+            .then(response => response.json())
+            .then(taux => {
+                document.getElementById('edit-idTaux').value = taux.idTaux;
+                document.getElementById('edit-montant1').value = taux.montant1;
+                document.getElementById('edit-montant2').value = taux.montant2;
+                document.getElementById('edit-pays').value = taux.pays;
+                document.getElementById('edit-monnaie').value = taux.monnaie;
+                $('#editTauxModal').modal('show');
+            })
+            .catch(error => console.error('Error fetching taux data:', error));
+    }
+
+    document.getElementById('edit-taux-form').addEventListener('submit', function (event) {
+        event.preventDefault();
+        let taux = {
+            idTaux: document.getElementById('edit-idTaux').value,
+            montant1: document.getElementById('edit-montant1').value,
+            montant2: document.getElementById('edit-montant2').value,
+            pays: document.getElementById('edit-pays').value,
+            monnaie: document.getElementById('edit-monnaie').value
+        };
+        fetch('/api/taux/' + taux.idTaux, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(taux)
+        })
+            .then(response => response.json())
+            .then(data => {
+                alert('Taux modifié avec succès!');
+                loadTaux(); // Reload the taux list
+                $('#editTauxModal').modal('hide');
+            })
+            .catch(error => console.error('Error updating taux:', error));
+    });
+
+    function deleteTaux(idTaux, button) {
+        if (confirm('Êtes-vous sûr de vouloir supprimer ce taux ?')) {
+            fetch('/api/taux/' + idTaux, {
+                method: 'DELETE'
+            })
+                .then(() => {
+                    alert('Taux supprimé avec succès!');
+                    loadTaux(); // Reload the taux list after deletion
+                })
+                .catch(error => console.error('Error deleting taux:', error));
+        }
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Envoyer List</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <style>
+        .sidebar {
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 250px;
+            background-color: #f8f9fa;
+            padding: 15px;
+        }
+        .sidebar h4 {
+            font-size: 1.5rem; /* Taille de police agrandie pour l'en-tête */
+            font-weight: bold; /* Poids de la police */
+            color: #007bff; /* Couleur de texte personnalisée */
+            margin-bottom: 20px; /* Espace sous l'en-tête */
+        }
+        .sidebar .nav-link {
+            font-size: 1.1rem; /* Taille de police agrandie pour les liens */
+            padding: 10px 15px; /* Espacement autour des liens */
+        }
+        .sidebar .nav-link i {
+            margin-right: 10px; /* Espace entre l'icône et le texte */
+        }
+        .main-content {
+            margin-left: 250px;
+            padding: 15px;
+            /* Styles pour le total des frais */
+            #total-fees-amount {
+                font-size: 1.5rem; /* Augmente la taille de la police */
+                color: #007bff; /* Couleur du texte */
+                font-weight: bold; /* Assurez-vous que le texte est en gras */
+            }
+        }
+    </style>
+</head>
+<body><div class="sidebar">
+    <h4>NeoBank</h4>
+    <ul class="nav flex-column">
+        <li class="nav-item">
+            <a class="nav-link" href="/client-list.html">
+                <i class="fas fa-users"></i> Clients
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/envoyer.html">
+                <i class="fas fa-paper-plane"></i> Envoyer
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/frais.html">
+                <i class="fas fa-dollar-sign"></i> Frais
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/taux.html">
+                <i class="fas fa-percentage"></i> Taux
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/generate-pdf-page">
+                <i class="fas fa-file-pdf"></i> Générer un PDF
+            </a>
+        </li>
+    </ul>
+</div>
+<div class="main-content">
+<div class="container">
+    <div class="row mt-5">
+        <!-- Barre de recherche -->
+        <div class="col-md-12 mb-3">
+            <h1>Liste des Envois</h1>
+            <form id="search-form" class="form-inline mb-3">
+                <input type="date" class="form-control mr-2" id="search-date" required>
+                <button type="submit" class="btn btn-primary">Rechercher</button>
+            </form>
+            <!-- Tableau des Envois -->
+            <table class="table table-striped mt-3">
+                <thead>
+                <tr>
+
+                    <th>Numéro Envoyeur</th>
+                    <th>Numéro Récepteur</th>
+                    <th>Montant</th>
+                    <th>Frais</th>
+                    <th>Date</th>
+                    <th>Raison</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody id="envoyer-table-body">
+                <!-- Les envois seront insérés ici -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Formulaire de Création d'Envoi -->
+        <div class="col-md-12">
+            <h2>Créer un Envoi</h2>
+            <form id="create-envoyer-form" class="mt-3">
+                <div class="form-row">
+                    <div class="form-group col-md-4">
+                        <label for="numEnvoyeur">Numéro Envoyeur</label>
+                        <select class="form-control" id="numEnvoyeur" required>
+                            <!-- Options will be populated here -->
+                        </select>
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label for="numRecepteur">Numéro Récepteur</label>
+                        <select class="form-control" id="numRecepteur" required>
+                            <!-- Options will be populated here -->
+                        </select>
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label for="montant">Montant</label>
+                        <input type="number" class="form-control" id="montant" step="0.01" required>
+                    </div>
+                    <div class="form-group col-md-12">
+                        <label for="raison">Raison</label>
+                        <input type="text" class="form-control" id="raison" required>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary">Créer Envoi</button>
+            </form>
+        </div>
+        <!-- Affichage du total des frais -->
+        <div id="total-fees" class="mb-3">
+            <h2>Recette totale de l'opérateur en euros :</h2>
+            <p id="total-fees-amount" class="font-weight-bold" style="font-size: 1.5rem; color: #007bff;">Chargement...</p>
+        </div>
+    </div>
+</div>
+</div>
+
+
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.7/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        loadEnvoyers();
+        loadClientNumbers();
+        loadTotalFees();
+    });
+    function loadEnvoyers(date = '') {
+        let url = '/api/envoyer';
+        if (date) {
+            url += '/search?date=' + date;
+        }
+
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                let tableBody = document.getElementById('envoyer-table-body');
+                tableBody.innerHTML = ''; // Clear existing content
+                data.forEach(envoyer => {
+                    let row = document.createElement('tr');
+                    row.innerHTML = `
+
+                        <td>${envoyer.numEnvoyeur}</td>
+                        <td>${envoyer.numRecepteur}</td>
+                        <td>${envoyer.montant}</td>
+                        <td>${envoyer.frais || 'N/A'}</td>
+                        <td>${new Date(envoyer.date).toISOString().split('T')}</td>
+                        <td>${envoyer.raison}</td>
+                        <td>
+
+                            <button class="btn btn-danger btn-sm" onclick="deleteEnvoyer(${envoyer.idEnv}, this)">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
+                        </td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+            })
+            .catch(error => console.error('Error fetching envoyer data:', error));
+    }
+
+    function loadClientNumbers() {
+        fetch('/api/client/numTel')
+            .then(response => response.json())
+            .then(data => {
+                let numEnvoyeurSelect = document.getElementById('numEnvoyeur');
+                let numRecepteurSelect = document.getElementById('numRecepteur');
+
+
+                data.forEach(numTel => {
+                    let option = document.createElement('option');
+                    option.value = numTel;
+                    option.text = numTel;
+                    numEnvoyeurSelect.appendChild(option.cloneNode(true));
+                    numRecepteurSelect.appendChild(option.cloneNode(true));
+
+                });
+            })
+            .catch(error => console.error('Error fetching client numbers:', error));
+    }
+
+
+    document.getElementById('create-envoyer-form').addEventListener('submit', function (event) {
+        event.preventDefault();
+
+        if (confirm('Êtes-vous sûr de vouloir créer cet envoi ?')) {
+            let envoyer = {
+                numEnvoyeur: document.getElementById('numEnvoyeur').value.trim(),
+                numRecepteur: document.getElementById('numRecepteur').value.trim(),
+                montant: parseFloat(document.getElementById('montant').value),
+                raison: document.getElementById('raison').value.trim()
+            };
+
+
+            fetch('/api/envoyer', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(envoyer)
+            })
+                .then(response => {
+
+                    if (!response.ok) {
+                        throw new Error('Erreur lors de la création de l\'envoi');
+                    }
+                    return response.json();
+                })
+                .then(() => {
+                    alert('Envoi créé avec succès!');
+                    loadEnvoyers();
+                })
+                .catch(error => {
+                    console.error('Erreur lors de la création de l\'envoi: ', error);
+                    alert(' l\'erreur lors de la création de l\'envoi: ');
+                    loadEnvoyers();
+                })
+                .finally(() => {
+                    document.getElementById('create-envoyer-form').reset();
+                });
+        }
+    });
+
+
+
+
+
+    document.getElementById('search-form').addEventListener('submit', function (event) {
+        event.preventDefault();
+        let date = document.getElementById('search-date').value;
+        // Format the date to yyyy-mm-dd
+        let formattedDate = new Date(date).toISOString().split('T')[0];
+        loadEnvoyers(formattedDate);
+    });
+
+    document.getElementById('edit-envoyer-form').addEventListener('submit', function (event) {
+        event.preventDefault();
+        let envoyer = {
+            idEnv: document.getElementById('edit-idEnvoyer').value,
+            numEnvoyeur: document.getElementById('edit-numEnvoyeur').value,
+            numRecepteur: document.getElementById('edit-numRecepteur').value,
+            montant: document.getElementById('edit-montant').value,
+            frais: document.getElementById('edit-frais').value,
+            date: document.getElementById('edit-date').value,
+            raison: document.getElementById('edit-raison').value
+        };
+        fetch('/api/envoyer/' + envoyer.idEnv, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(envoyer)
+        })
+            .then(response => response.json())
+            .then(data => {
+                alert('Envoyer modifié avec succès!');
+                loadEnvoyers(); // Reload the envoyer list
+                $('#editEnvoyerModal').modal('hide');
+            })
+            .catch(error => console.error('Error updating envoyer:', error));
+    });
+
+
+
+    function deleteEnvoyer(idEnvoyer, button) {
+        if (confirm('Êtes-vous sûr de vouloir supprimer cet envoyer ?')) {
+            fetch('/api/envoyer/' + idEnvoyer, {
+                method: 'DELETE'
+            })
+                .then(() => {
+                    alert('Envoyer supprimé avec succès!');
+                    loadEnvoyers(); // Reload the envoyer list after deletion
+                })
+                .catch(error => console.error('Error deleting envoyer:', error));
+        }
+    }
+    function loadTotalFees() {
+        fetch('/api/envoyer/totalFees')
+            .then(response => response.json())
+            .then(totalFees => {
+                // Met à jour le contenu du div avec le total des frais
+                document.getElementById('total-fees-amount').innerText = totalFees.toFixed(2) + ' €';
+                loadEnvoyers(); // Reload the envoyer list after deletion
+            })
+            .catch(error => {
+                console.error('Erreur lors de la récupération des frais totaux:', error);
+                document.getElementById('total-fees-amount').innerText = 'Erreur de chargement';
+            });
+    }
+
+</script>
+</body>
+</html>
